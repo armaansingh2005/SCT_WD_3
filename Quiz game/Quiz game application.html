@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Interactive Quiz Game</title>
+
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+
+
+body{
+
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+    linear-gradient(
+    135deg,
+    #667eea,
+    #764ba2
+    );
+
+}
+
+
+
+/* Quiz Box */
+
+.container{
+
+    width:450px;
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:25px;
+
+
+    box-shadow:
+    0 20px 50px
+    rgba(0,0,0,.4);
+
+
+    animation:
+    show .6s ease;
+
+}
+
+
+
+@keyframes show{
+
+from{
+
+opacity:0;
+
+transform:
+scale(.5);
+
+}
+
+
+to{
+
+opacity:1;
+
+transform:
+scale(1);
+
+}
+
+}
+
+
+
+h1{
+
+text-align:center;
+
+margin-bottom:20px;
+
+color:#333;
+
+}
+
+
+
+#question{
+
+font-size:22px;
+
+margin-bottom:20px;
+
+}
+
+
+
+.option{
+
+display:block;
+
+padding:12px;
+
+margin:10px 0;
+
+border-radius:12px;
+
+
+background:#eee;
+
+
+cursor:pointer;
+
+
+transition:.3s;
+
+}
+
+
+
+.option:hover{
+
+background:#667eea;
+
+color:white;
+
+}
+
+
+
+button{
+
+width:100%;
+
+padding:12px;
+
+margin-top:15px;
+
+
+border:none;
+
+border-radius:20px;
+
+
+background:#764ba2;
+
+color:white;
+
+
+font-size:18px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+
+
+button:hover{
+
+transform:scale(1.05);
+
+}
+
+
+
+input{
+
+width:100%;
+
+padding:12px;
+
+font-size:17px;
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>Quiz Game</h1>
+
+
+<h3 id="count"></h3>
+
+
+<h2 id="question"></h2>
+
+
+<div id="answers"></div>
+
+
+<button onclick="nextQuestion()">
+Next
+</button>
+
+
+</div>
+
+
+
+
+
+
+
+<script>
+
+
+const quiz=[
+
+
+{
+
+type:"single",
+
+question:
+"Which language runs in a browser?",
+
+options:[
+"Java",
+"C++",
+"JavaScript",
+"Python"
+],
+
+answer:
+["JavaScript"]
+
+},
+
+
+
+{
+
+type:"multi",
+
+question:
+"Select programming languages",
+
+options:[
+"HTML",
+"Python",
+"Java",
+"CSS"
+],
+
+answer:[
+"Python",
+"Java"
+]
+
+},
+
+
+
+
+{
+
+type:"fill",
+
+question:
+"CSS stands for ______ Style Sheets",
+
+answer:[
+"Cascading"
+]
+
+},
+
+
+
+
+{
+
+type:"single",
+
+question:
+"DOM stands for?",
+
+options:[
+"Document Object Model",
+"Data Object Method",
+"Digital Ordinance Model"
+],
+
+answer:[
+"Document Object Model"
+]
+
+}
+
+
+];
+
+
+
+
+
+let index=0;
+
+let score=0;
+
+
+
+
+
+
+function loadQuestion(){
+
+
+let current =
+quiz[index];
+
+
+
+document.getElementById("count")
+.innerHTML =
+`Question ${index+1}/${quiz.length}`;
+
+
+
+document.getElementById("question")
+.innerHTML =
+current.question;
+
+
+
+let answerBox =
+document.getElementById("answers");
+
+
+answerBox.innerHTML="";
+
+
+
+
+
+if(
+current.type==="single"
+){
+
+
+current.options.forEach(option=>{
+
+
+answerBox.innerHTML +=
+
+`
+
+<label class="option">
+
+<input 
+type="radio"
+name="answer"
+value="${option}">
+
+${option}
+
+</label>
+
+`;
+
+});
+
+
+}
+
+
+
+
+else if(
+current.type==="multi"
+){
+
+
+current.options.forEach(option=>{
+
+
+answerBox.innerHTML +=
+
+`
+
+<label class="option">
+
+<input 
+type="checkbox"
+value="${option}">
+
+${option}
+
+</label>
+
+`;
+
+});
+
+
+}
+
+
+
+
+
+else if(
+current.type==="fill"
+){
+
+
+
+answerBox.innerHTML=
+
+`
+
+<input 
+id="fillAnswer"
+placeholder="Type your answer">
+
+`;
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+function nextQuestion(){
+
+
+
+let current =
+quiz[index];
+
+let userAnswers=[];
+
+
+
+
+
+if(current.type==="fill"){
+
+
+let input =
+document.getElementById(
+"fillAnswer"
+).value;
+
+
+userAnswers.push(input);
+
+
+}
+
+
+
+else{
+
+
+document
+.querySelectorAll(
+"input:checked"
+)
+.forEach(item=>{
+
+
+userAnswers.push(
+item.value
+);
+
+
+});
+
+
+}
+
+
+
+
+// Checking Answer
+
+
+if(
+
+JSON.stringify(
+userAnswers.sort()
+)
+
+===
+
+JSON.stringify(
+current.answer.sort()
+)
+
+){
+
+
+score++;
+
+
+}
+
+
+
+
+index++;
+
+
+
+
+if(index<quiz.length){
+
+
+loadQuestion();
+
+
+}
+
+
+
+else{
+
+
+
+document.querySelector(
+".container"
+).innerHTML =
+
+`
+
+<h1>Quiz Completed 🎉</h1>
+
+<h2>Your Score:</h2>
+
+<h1>${score}/${quiz.length}</h1>
+
+
+<button onclick="location.reload()">
+
+Restart Quiz
+
+</button>
+
+`;
+
+
+}
+
+
+
+}
+
+
+
+
+
+loadQuestion();
+
+
+
+</script>
+
+
+
+</body>
+
+</html>
